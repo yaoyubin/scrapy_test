@@ -27,7 +27,11 @@ class youku(threading.Thread):
     def parseUrl(self):
         req=urllib2.urlopen(self.baseUrl)
         contet=req.read()
-        
+
+        # for debug
+        f = file('url.log','w+')
+        f.write(contet)
+        f.close()
         
         if self.vshow.match(self.baseUrl):
             return set(self.vshow.findall(contet))
@@ -41,7 +45,7 @@ class youku(threading.Thread):
         for matche in matches:
             print ('matches:%s'%matche)
             self.youkuQueue.put(matche)
-"""
+#"""
 if __name__=='__main__':
     Base_Url="http://www.youku.com/show_page/id_z70902150919c11e0a046.html"
     #Base_Url="http://tv.youku.com/search/"
@@ -49,6 +53,6 @@ if __name__=='__main__':
     #Base_Url="http://www.baidu.com"
     youkuQueue=Queue.Queue()
     youku=youku(Base_Url,youkuQueue)
-"""
+#"""
 
 
