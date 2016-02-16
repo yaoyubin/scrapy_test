@@ -22,10 +22,10 @@ class flcvd(threading.Thread):
         self.start()
     
     def hidentFileUrl(self):
-        return re.compile('(http://f.youku.com/player/getFlvPath.+\s?)')
+        return re.compile('(http://k.youku.com/player/getFlvPath.+\s?)')
 
     def herfFileUrl(self):
-        return re.compile(r'<a href=\"(http://f.youku.com/player/getFlvPath[^\"]+)')    
+        return re.compile(r'<a href=\"(http://k.youku.com/player/getFlvPath[^\"]+)')    
         
     def youku_v_show(self):
         return re.compile(r'http://v\.youku\.com/v_show/id_.+\.html')        
@@ -47,12 +47,14 @@ class flcvd(threading.Thread):
     
     def parseUrl(self,youkuUrl):
         targetUrl=self.compileUrl(youkuUrl)
+        #print (targetUrl) # debug
         req=urllib2.Request(
             url =targetUrl,
             headers = self.headers(targetUrl)
         )
         resp=urllib2.urlopen(req)
         content=resp.read()
+
         if self.vshow.match(youkuUrl):
             return self.herfshow.findall(content)
         else:
@@ -60,6 +62,7 @@ class flcvd(threading.Thread):
 
     
     def run(self):
+        ListFile = open('downloadlist.lst','w+')
         while True:
             youkuUrl=self.youkuQueue.get()
             print '[No:%d] flvcd robot youku url>>%s'%(self.worknum,youkuUrl)
@@ -67,18 +70,22 @@ class flcvd(threading.Thread):
             #print matches
             for item in matches:
                 #print item
+                ListFile.write(item.rstrip()+"\n")
                 self.downloadList.append(item.rstrip())
                 
             if self.youkuQueue.empty():
                 print '[No:%d] flcvd no work ,bye bye...'%self.worknum
                 break
+        ListFile.close()
         
         
 """   """   
 if __name__=='__main__':
     youkuQueue=Queue.Queue()
+    #youkuQueue.put('http://www.youku.com/playlist_show/id_26388032.html')
     youkuQueue.put('http://v.youku.com/v_show/id_XNDkzNTk2NDQw.html')
     #youkuQueue.put('http://www.youku.com/show_page/id_z70902150919c11e0a046.html')
     downloadList=[]
     flcvd=flcvd(1,'super',downloadList,youkuQueue)
+
     

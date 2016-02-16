@@ -29,9 +29,9 @@ class youku(threading.Thread):
         contet=req.read()
 
         # for debug
-        f = file('url.log','w+')
-        f.write(contet)
-        f.close()
+        #f = open('url.log','w+')
+        #f.write(contet)
+        #f.close()
         
         if self.vshow.match(self.baseUrl):
             return set(self.vshow.findall(contet))
@@ -45,14 +45,15 @@ class youku(threading.Thread):
         for matche in matches:
             print ('matches:%s'%matche)
             self.youkuQueue.put(matche)
-#"""
+"""
 if __name__=='__main__':
-    Base_Url="http://www.youku.com/show_page/id_z70902150919c11e0a046.html"
+    Base_Url="http://www.youku.com/playlist_show/id_26388032.html"  # Normal Album
+    #Base_Url="http://www.youku.com/show_page/id_z70902150919c11e0a046.html"    # <Chu Han Chuan Qi> Album
     #Base_Url="http://tv.youku.com/search/"
-    #Base_Url="http://v.youku.com/v_show/id_XNDkyODUyMTQ0.html"
+    #Base_Url="http://v.youku.com/v_show/id_XNDkyODUyMTQ0.html"    # <Chu Han Chuan Qi> #3
     #Base_Url="http://www.baidu.com"
     youkuQueue=Queue.Queue()
     youku=youku(Base_Url,youkuQueue)
-#"""
+"""
 
 
